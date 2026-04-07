@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Zetech Lost and Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --zetech-blue: #003366;
+            --glass-white: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(0, 31, 63, 0.7), rgba(0, 31, 63, 0.7)), 
+                        url('Campus.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .signup-card {
+            background: var(--glass-white);
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .signup-card h2 { color: var(--zetech-blue); font-size: 1.6rem; margin: 0; font-weight: 700; }
+        .signup-card h3 { color: #666; font-weight: 400; font-size: 0.9rem; margin: 10px 0 25px 0; letter-spacing: 0.5px; }
+
+        /* Banners */
+        .banner { display: none; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 500; }
+        .error-banner { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .warning-banner { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        /* Full width for specific fields */
+        .full-width { grid-column: span 2; }
+
+        .form-group label { display: block; font-size: 0.7rem; color: var(--zetech-blue); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+        
+        input, select {
+            width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px;
+            box-sizing: border-box; font-size: 0.9rem; transition: 0.3s; background: white; outline: none;
+        }
+        input:focus, select:focus { border-color: var(--zetech-blue); box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); }
+
+        .input-container { position: relative; }
+        .toggle-password {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--zetech-blue); font-size: 0.6rem; font-weight: 800;
+            background: #f3f4f6; padding: 4px 6px; border-radius: 4px;
+        }
+
+        /* Password Strength */
+        .strength-meter { height: 4px; width: 100%; background: #e5e7eb; margin-top: 6px; border-radius: 2px; overflow: hidden; }
+        .strength-bar { height: 100%; width: 0%; transition: 0.4s ease; }
+
+        .signup-btn {
+            width: 100%; padding: 14px; background: var(--zetech-blue); color: white;
+            border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .signup-btn:hover { background: #002244; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        .footer-links { margin-top: 20px; font-size: 0.9rem; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+        .footer-links a { color: var(--zetech-blue); text-decoration: none; font-weight: 700; }
+
+        /* Mobile Layout fix */
+        @media (max-width: 400px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-card">
+    <h2>ZETECH UNIVERSITY</h2>
+    <h3>CREATE NEW ACCOUNT</h3>
+
+    <div id="signup-error" class="banner error-banner">❌ Reg Number or Username already exists.</div>
+    <div id="validation-error" class="banner warning-banner"></div>
+    
+    <form action="signup.php" method="POST" id="registrationForm">
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label>Full Name</label>
+                <input type="text" name="full_name" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label>University Email</label>   
+                <input type="email" name="email" placeholder="name@zetech.ac.ke" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" name="phone" id="phone" placeholder="0712345678" maxlength="10" required>
+            </div>
+
+            <div class="form-group">
+                <label>Reg Number</label>
+                <input type="text" name="registration_number" placeholder="ZETECH/001" required>
+            </div>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Choose username" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Password</label>
+                <div class="input-container">
+                    <input type="password" name="password" id="password" placeholder="Min 6 characters" required onkeyup="checkStrength(this.value)">
+                    <span class="toggle-password" onclick="togglePass()">SHOW</span>
+                </div>
+                <div class="strength-meter"><div id="strength-bar" class="strength-bar"></div></div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Account Type</label>
+                <select name="role" required>
+                    <option value="" disabled selected>-- Select Role --</option>
+                    <option value="Student">Student</option>
+                    <option value="Staff">Staff</option> 
+                    <option value="Admin">Administrator</option>
+                </select>
+            </div>
+        </div>
+        
+        <button type="submit" class="signup-btn">Register Account</button>
+    </form>
+
+    <div class="footer-links">
+        Already have an account? <a href="login.html">Login here</a>
+    </div>
+</div>
+
+<script>
+    function togglePass() {
+        const field = document.getElementById('password');
+        const btn = document.querySelector('.toggle-password');
+        if (field.type === "password") {
+            field.type = "text";
+            btn.textContent = "HIDE";
+        } else {
+            field.type = "password";
+            btn.textContent = "SHOW";
+        }
+    }
+
+    function checkStrength(p) {
+        const bar = document.getElementById('strength-bar');
+        let score = 0;
+        if (p.length >= 6) score++;
+        if (p.match(/[A-Z]/)) score++;
+        if (p.match(/\d/)) score++;
+        if (p.match(/[^a-zA-Z\d]/)) score++;
+
+        const colors = ["#ef4444", "#f59e0b", "#3b82f6", "#10b981"];
+        bar.style.width = (p.length === 0) ? "0%" : (score * 25) + "%";
+        bar.style.backgroundColor = colors[score-1] || colors[0];
+    }
+
+    const form = document.getElementById('registrationForm');
+    form.onsubmit = function(e) {
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+        const vError = document.getElementById('validation-error');
+        let error = "";
+
+        if (!/^\d{10}$/.test(phone)) error = "❌ Phone must be 10 digits.";
+        else if (password.length < 6) error = "❌ Password must be at least 6 characters.";
+
+        if (error !== "") {
+            e.preventDefault();
+            vError.style.display = 'block';
+            vError.innerHTML = error;
+            window.scrollTo(0, 0);
+            return false;
+        }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('status') === 'exists') {
+        document.getElementById('signup-error').style.display = 'block';
+    }
+</script>
+</body>
+</html>
