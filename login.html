@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Zetech Lost and Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --zetech-blue: #003366;
+            --zetech-gold: #FFD700;
+            --glass-white: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(rgba(0, 31, 63, 0.7), rgba(0, 31, 63, 0.7)), 
+                        url('Campus.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--glass-white);
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-card h2 { color: var(--zetech-blue); font-size: 1.6rem; margin: 0; font-weight: 700; }
+        .login-card h3 { color: #666; font-weight: 400; font-size: 0.95rem; margin: 10px 0 30px 0; letter-spacing: 0.5px; }
+
+        .banner { display: none; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 500; }
+        .error-banner { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .success-banner { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 0.75rem; color: var(--zetech-blue); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+        
+        .input-container { position: relative; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 14px 12px; border: 2px solid #e5e7eb; border-radius: 10px;
+            box-sizing: border-box; font-size: 1rem; transition: 0.3s; background: white; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--zetech-blue); box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1); }
+
+        .toggle-password {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--zetech-blue); font-size: 0.7rem; font-weight: 800;
+            background: #f3f4f6; padding: 4px 8px; border-radius: 6px;
+        }
+
+        .remember-row { margin-bottom: 20px; text-align: left; }
+        .remember-me { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: #4b5563; }
+        .remember-me input { width: 16px; height: 16px; cursor: pointer; }
+
+        .login-btn {
+            width: 100%; padding: 14px; background: var(--zetech-blue); color: white;
+            border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0, 51, 102, 0.3);
+        }
+        .login-btn:hover { background: #002244; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 51, 102, 0.4); }
+
+        .forgot-link { margin-top: 20px; display: block; font-size: 0.85rem; color: #6b7280; text-decoration: none; }
+        .forgot-link:hover { color: var(--zetech-blue); text-decoration: underline; }
+
+        .footer-links { margin-top: 15px; font-size: 0.9rem; color: #6b7280; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+        .footer-links a { color: var(--zetech-blue); text-decoration: none; font-weight: 700; }
+
+        /* Style for the Disclaimer */
+        .disclaimer { 
+            margin-top: 15px; 
+            font-size: 0.7rem; 
+            color: #9ca3af; 
+            font-style: italic; 
+            line-height: 1.4;
+        }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>ZETECH UNIVERSITY</h2>
+    <h3>LOST & FOUND PORTAL</h3>
+    
+    <div id="login-success" class="banner success-banner">✅ Account registered! You can now login.</div>
+    <div id="login-error" class="banner error-banner"></div>
+    
+    <form action="login.php" method="POST">
+        <div class="form-group">
+            <label>Registration Number or Username</label>
+            <input type="text" name="username" id="username_input" placeholder="e.g., ZETECH/001 or Username" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-container">
+                <input type="password" name="password" id="password" autocomplete="new-password" placeholder="Enter password" required>
+                <span class="toggle-password" onclick="togglePass()">SHOW</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Account Type</label>
+            <select name="role" required>
+                <option value="" disabled selected>-- Select Your Role --</option>
+                <option value="student">Student</option>
+                <option value="staff">Staff</option>
+                <option value="administrator">Administrator</option> 
+            </select>
+        </div>
+
+        <div class="remember-row">
+            <label class="remember-me">
+                <input type="checkbox" name="remember" id="remember">
+                <span>Remember Username</span>
+            </label>
+        </div>
+        
+        <button type="submit" class="login-btn">Sign In</button>
+    </form>
+
+    <a href="forget_password.php" class="forgot-link">Forgot Password?</a>
+
+    <div class="footer-links">
+        New here? <a href="signup.html">Create an Account</a>
+        <div class="disclaimer">
+            Note: This is a student project for educational purposes and not the official Zetech University website.
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePass() {
+        const passwordField = document.getElementById('password');
+        const toggleBtn = document.querySelector('.toggle-password');
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleBtn.textContent = "HIDE";
+        } else {
+            passwordField.type = "password";
+            toggleBtn.textContent = "SHOW";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const name = "remembered_user=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const ca = decodedCookie.split(';');
+        
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(name) == 0) {
+                document.getElementById("username_input").value = c.substring(name.length, c.length);
+                document.getElementById("remember").checked = true;
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const errorMsg = document.getElementById('login-error');
+        const successMsg = document.getElementById('login-success');
+        
+        if (params.has('error')) {
+            errorMsg.style.display = 'block';
+            const errorType = params.get('error');
+            if (errorType === 'usernotfound') errorMsg.innerHTML = "❌ Account not found.";
+            else if (errorType === 'rolemismatch') errorMsg.innerHTML = "❌ Role mismatch: Check if you are an Admin/User.";
+            else if (errorType === 'wrongpass') errorMsg.innerHTML = "❌ Incorrect password.";
+            else if (errorType === 'notverified') errorMsg.innerHTML = "⚠️ Account not verified. Check your email.";
+            else if (errorType === 'timeout') {
+                errorMsg.innerHTML = "⚠️ Session timed out. Please log in again.";
+                errorMsg.style.background = "#fff3cd"; 
+                errorMsg.style.color = "#856404";
+            } else errorMsg.innerHTML = "❌ Login failed (" + errorType + "). Try again.";
+        }
+        
+        if (params.get('status') === 'registered') successMsg.style.display = 'block';
+        if (params.get('status') === 'verified') {
+            successMsg.style.display = 'block';
+            successMsg.innerHTML = "✅ Account verified successfully! You can now log in.";
+        }
+    });
+</script>
+    <footer style="
+    margin-top: 50px;
+    padding: 30px 20px;
+    background: rgba(0, 31, 63, 0.9);
+    color: #ffffff;
+    text-align: center;
+    border-top: 3px solid #FFD700;
+    font-family: 'Inter', sans-serif;
+">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <p style="font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; color: #FFD700;">
+            OFFICIAL STUDENT PROJECT DISCLOSURE
+        </p>
+        <p style="font-size: 0.85rem; line-height: 1.6; opacity: 0.9; margin-bottom: 15px;">
+            This website is a <strong>Capstone Project</strong> developed by students at 
+            <strong>Zetech University</strong> for the Course: <em>Web Application Development</em>. 
+            All data collected is used solely for academic demonstration and testing of database 
+            functionalities.
+        </p>
+        <div style="font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+            &copy; <?php echo date('Y'); ?> Zetech University Lost & Found System | 
+            <span style="color: #FFD700;">Educational Purpose Only</span> | 
+            <a href="https://www.zetech.ac.ke" target="_blank" style="color: #fff; text-decoration: underline;">Institutional Site</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
